@@ -1,0 +1,1 @@
+[Algorithm Functions (open-cmsis-pack.github.io)](https://open-cmsis-pack.github.io/Open-CMSIS-Pack-Spec/main/html/algorithmFunc.html)
