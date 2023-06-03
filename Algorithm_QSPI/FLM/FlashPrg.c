@@ -40,7 +40,7 @@
 #include "w25qxx.h"
 
 /* Private define -----------------------------------------------------------*/
-#define FlashProg_Use_Verify
+//#define FlashProg_Use_Verify
 
 /* Private typedef -----------------------------------------------------------*/
 #define GPIO_LED_R_PORT     GPIOC
