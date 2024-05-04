@@ -1,0 +1,17 @@
+../Core/Src/w25q256jv.c:29:13:W25QXX_WriteEnable	2
+../Core/Src/w25q256jv.c:58:9:W25QXX_ReadSR	7
+../Core/Src/w25q256jv.c:106:13:W25QXX_WriteSR	7
+../Core/Src/w25q256jv.c:151:13:W25QXX_CheckBusy	2
+../Core/Src/w25q256jv.c:195:13:W25QXX_ExitQPIMode	1
+../Core/Src/w25q256jv.c:223:13:W25QXX_EnterQPIMode	3
+../Core/Src/w25q256jv.c:272:13:W25QXX_Reset	3
+../Core/Src/w25q256jv.c:308:6:W25QXX_Enter4ByteAddrMode	3
+../Core/Src/w25q256jv.c:340:6:W25QXX_Init	1
+../Core/Src/w25q256jv.c:348:6:W25QXX_Erase_Chip	3
+../Core/Src/w25q256jv.c:380:6:W25QXX_Erase_Sector	3
+../Core/Src/w25q256jv.c:419:6:W25QXX_Erase_64KB_Block	3
+../Core/Src/w25q256jv.c:458:6:W25QXX_ProgramPage	4
+../Core/Src/w25q256jv.c:501:6:W25QXX_FastRead	3
+../Core/Src/w25q256jv.c:540:6:W25QXX_Write	8
+../Core/Src/w25q256jv.c:602:6:W25QXX_Write_NoCheck	4
+../Core/Src/w25q256jv.c:635:6:W25QXX_MemoryMapped	2

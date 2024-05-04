@@ -1,0 +1,27 @@
+--cpu Cortex-M7.fp.dp
+".\stm32h750xbh_artpiqspi_w25q64jv\main.o"
+".\stm32h750xbh_artpiqspi_w25q64jv\quadspi.o"
+".\stm32h750xbh_artpiqspi_w25q64jv\stm32h7xx_it.o"
+".\stm32h750xbh_artpiqspi_w25q64jv\stm32h7xx_hal_msp.o"
+".\stm32h750xbh_artpiqspi_w25q64jv\dev_inf.o"
+".\stm32h750xbh_artpiqspi_w25q64jv\loader_src.o"
+".\stm32h750xbh_artpiqspi_w25q64jv\w25qxx.o"
+".\stm32h750xbh_artpiqspi_w25q64jv\usart.o"
+".\stm32h750xbh_artpiqspi_w25q64jv\w25q64jvx.o"
+".\stm32h750xbh_artpiqspi_w25q64jv\stm32h7xx_hal_cortex.o"
+".\stm32h750xbh_artpiqspi_w25q64jv\stm32h7xx_hal_qspi.o"
+".\stm32h750xbh_artpiqspi_w25q64jv\stm32h7xx_hal_rcc.o"
+".\stm32h750xbh_artpiqspi_w25q64jv\stm32h7xx_hal_rcc_ex.o"
+".\stm32h750xbh_artpiqspi_w25q64jv\stm32h7xx_hal_gpio.o"
+".\stm32h750xbh_artpiqspi_w25q64jv\stm32h7xx_hal.o"
+".\stm32h750xbh_artpiqspi_w25q64jv\stm32h7xx_hal_pwr.o"
+".\stm32h750xbh_artpiqspi_w25q64jv\stm32h7xx_hal_pwr_ex.o"
+".\stm32h750xbh_artpiqspi_w25q64jv\stm32h7xx_hal_uart.o"
+".\stm32h750xbh_artpiqspi_w25q64jv\stm32h7xx_hal_uart_ex.o"
+".\stm32h750xbh_artpiqspi_w25q64jv\stm32h7xx_hal_dma.o"
+".\stm32h750xbh_artpiqspi_w25q64jv\stm32h7xx_hal_mdma.o"
+".\stm32h750xbh_artpiqspi_w25q64jv\system_stm32h7xx.o"
+--strict --scatter "..\loader.sct"
+--diag_suppress L6305 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list "STM32H750XBH_ARTPIQSPI_W25Q64JV.map" -o .\STM32H750XBH_ARTPIQSPI_W25Q64JV\STM32H750XBH_ARTPIQSPI_W25Q64JV.axf

@@ -1,0 +1,11 @@
+{
+    "cmsis-csolution.actions": [
+        {
+            "path": "stm32h750xb.csolution.yml",
+            "target": "stm32h750xb",
+            "config": {
+                "debug": "Arm Debugger"
+            }
+        }
+    ]
+}

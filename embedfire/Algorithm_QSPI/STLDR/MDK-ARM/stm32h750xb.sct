@@ -1,0 +1,20 @@
+;FLASH_LOADER 0x24000004 PI   ; FlashLoader Functions
+FLASH_LOADER 0x24000000 PI   ; FlashLoader Functions, Used to avoid the error of AC6
+{
+  PrgCode +0           ; Code
+  {
+    * (+RO)
+  }
+  PrgData +0           ; Data
+  {
+    * (+RW,+ZI)
+  }
+}
+
+DEVICE_INFO +0               ; Device Info
+{
+  DevInfo +0           ; Info structure
+  {
+    dev_inf.o
+  }
+}
