@@ -1,0 +1,297 @@
+#include <dual_w25q256jv.h>
+#include <quadspi.h>
+#include <stdio.h>
+
+static w25qxx_interface_t w25qxx_mode = W25QXX_INTERFACE_QPI;
+
+int w25qxx_set_address_mode(w25qxx_address_mode_t address_mode)
+{
+    QSPI_CommandTypeDef cmd = {0};
+
+    if (address_mode == W25QXX_ADDRESS_MODE_4_BYTE)
+        cmd.Instruction = W25QXX_CMD_ENTER_4_BYTES_ADDRESS_MODE;
+    else
+        cmd.Instruction = W25QXX_CMD_EXIT_4_BYTES_ADDRESS_MODE;
+    cmd.InstructionMode = QSPI_INSTRUCTION_1_LINE;
+
+    if (HAL_OK == HAL_QSPI_Command(&hqspi, &cmd, QSPI_TIMEOUT))
+    {
+        return QSPI_OK;
+    }
+
+    return QSPI_ERROR;
+}
+
+int w25qxx_init(void)
+{
+    w25qxx_reset();
+	for(int i = 0; i < 1000; i++)	HAL_Delay(1);       // 30us to delay
+    w25qxx_set_address_mode(W25QXX_ADDRESS_MODE_4_BYTE);
+    w25qxx_write_status_reg(2, 0202);       // enable QE bit
+
+    return QSPI_OK;
+}
+
+int w25qxx_autopolling_ready(void)
+{
+    QSPI_CommandTypeDef cmd = {0};
+    QSPI_AutoPollingTypeDef config = {0};
+
+    cmd.InstructionMode = QSPI_INSTRUCTION_1_LINE;
+    cmd.Instruction = W25QXX_CMD_READ_STATUS_REG1;
+
+    cmd.DataMode = QSPI_DATA_1_LINE;
+
+    config.Mask = 0x0101;
+    config.Match = 0x0000;
+    config.MatchMode = QSPI_MATCH_MODE_AND;
+    config.StatusBytesSize = 2;
+    config.Interval = 10;
+    config.AutomaticStop = QSPI_AUTOMATIC_STOP_ENABLE;
+
+    if (HAL_QSPI_AutoPolling(&hqspi, &cmd, &config, QSPI_TIMEOUT) != HAL_OK)
+    {
+        Error_Handler();
+    }
+
+    return QSPI_OK;
+}
+
+int w25qxx_memorymapped(void)
+{
+    QSPI_CommandTypeDef cmd = {0};
+    QSPI_MemoryMappedTypeDef config = {0};
+
+    w25qxx_autopolling_ready();
+
+    cmd.Instruction = W25QXX_CMD_FAST_READ_QUAD_IO;
+    cmd.InstructionMode = QSPI_INSTRUCTION_1_LINE;
+
+    cmd.AddressMode = QSPI_ADDRESS_4_LINES;
+    cmd.AddressSize = QSPI_ADDRESS_32_BITS;
+    cmd.Address = 0x00;
+
+    cmd.AlternateByteMode = QSPI_ALTERNATE_BYTES_4_LINES;
+    cmd.AlternateBytesSize = QSPI_ALTERNATE_BYTES_8_BITS;
+    cmd.AlternateBytes = 0xFF;
+
+    cmd.DummyCycles = 4;
+
+    cmd.DataMode =  QSPI_DATA_4_LINES;
+
+    config.TimeOutActivation = QSPI_TIMEOUT_COUNTER_DISABLE;
+    config.TimeOutPeriod = 0;
+
+    if (HAL_QSPI_MemoryMapped(&hqspi, &cmd, &config) != HAL_OK)
+    {
+        Error_Handler();
+    }
+
+    return QSPI_OK;
+}
+
+int w25qxx_write_enable(void)
+{
+    QSPI_CommandTypeDef cmd = {0};
+
+    cmd.InstructionMode = QSPI_INSTRUCTION_1_LINE;
+    cmd.Instruction = W25QXX_CMD_WRITE_ENABLE;
+
+    if (HAL_OK == HAL_QSPI_Command(&hqspi, &cmd, QSPI_TIMEOUT))
+    {
+        return HAL_OK;
+    }
+    else return HAL_ERROR;
+
+    w25qxx_autopolling_ready();
+
+    return QSPI_OK;
+}
+
+int w25qxx_reset(void)
+{
+    QSPI_CommandTypeDef cmd = {0};
+	
+	w25qxx_autopolling_ready();
+
+    cmd.InstructionMode = QSPI_INSTRUCTION_1_LINE;
+    cmd.Instruction = W25QXX_CMD_ENABLE_RESET;
+
+    if (HAL_OK != HAL_QSPI_Command(&hqspi, &cmd, QSPI_TIMEOUT))
+    {
+        return QSPI_ERROR;
+    }
+
+    cmd.Instruction = W25QXX_CMD_RESET_DEVICE;
+    if (HAL_OK != HAL_QSPI_Command(&hqspi, &cmd, QSPI_TIMEOUT))
+    {
+        return QSPI_ERROR;
+    }
+
+    return QSPI_OK;
+}
+
+int w25qxx_write_enable_for_volatile_status_reg(void)
+{
+    QSPI_CommandTypeDef cmd = {0};
+
+    cmd.InstructionMode = QSPI_INSTRUCTION_1_LINE;
+    cmd.Instruction = W25QXX_CMD_VOLATILE_SR_WRITE_ENABLE;
+
+    HAL_QSPI_Command(&hqspi, &cmd, QSPI_TIMEOUT);
+
+    return QSPI_OK;
+}
+
+int w25qxx_read_status_reg(uint8_t reg, uint16_t *status)
+{
+    QSPI_CommandTypeDef cmd = {0};
+
+    cmd.InstructionMode = QSPI_INSTRUCTION_1_LINE;
+
+    switch (reg)
+    {
+    case 1:
+        cmd.Instruction = W25QXX_CMD_READ_STATUS_REG1;
+        break;
+    case 2:
+        cmd.Instruction = W25QXX_CMD_READ_STATUS_REG2;
+        break;
+    case 3:
+        cmd.Instruction = W25QXX_CMD_READ_STATUS_REG3;
+        break;
+    default:
+        cmd.Instruction = W25QXX_CMD_READ_STATUS_REG1;
+        break;
+    }
+
+    cmd.DataMode = QSPI_DATA_1_LINE;
+    cmd.NbData = 2;
+
+    HAL_QSPI_Command(&hqspi, &cmd, QSPI_TIMEOUT);
+
+    uint16_t data = 0;
+    HAL_QSPI_Receive(&hqspi, (uint8_t *)&data, QSPI_TIMEOUT);
+
+    *status = data;
+
+    return QSPI_OK;
+}
+
+int w25qxx_write_status_reg(uint8_t reg, uint16_t status)
+{
+    QSPI_CommandTypeDef cmd = {0};
+
+    cmd.InstructionMode = QSPI_INSTRUCTION_1_LINE;
+
+    switch (reg)
+    {
+    case 1:
+        cmd.Instruction = W25QXX_CMD_WRITE_STATUS_REG1;
+        break;
+    case 2:
+        cmd.Instruction = W25QXX_CMD_WRITE_STATUS_REG2;
+        break;
+    case 3:
+        cmd.Instruction = W25QXX_CMD_WRITE_STATUS_REG3;
+        break;
+    default:
+        cmd.Instruction = W25QXX_CMD_WRITE_STATUS_REG1;
+        break;
+    }
+
+    cmd.DataMode = QSPI_DATA_1_LINE;
+    cmd.NbData = 2;
+
+    HAL_QSPI_Command(&hqspi, &cmd, QSPI_TIMEOUT);
+
+    HAL_QSPI_Transmit(&hqspi, (uint8_t *)&status, QSPI_TIMEOUT);
+
+    w25qxx_autopolling_ready();
+
+    return QSPI_OK;
+}
+
+int w25qxx_8k_sector_erase(uint32_t addr)
+{
+    QSPI_CommandTypeDef cmd = {0};
+
+    w25qxx_write_enable();
+
+    cmd.Instruction = W25QXX_CMD_SECTOR_ERASE_4K;
+    cmd.InstructionMode = QSPI_INSTRUCTION_1_LINE;
+
+    cmd.Address = addr;
+    cmd.AddressMode = QSPI_ADDRESS_1_LINE;
+    cmd.AddressSize = QSPI_ADDRESS_32_BITS;
+
+    HAL_QSPI_Command(&hqspi, &cmd, QSPI_TIMEOUT);
+
+    w25qxx_autopolling_ready();
+
+    return QSPI_OK;
+}
+
+//int w25qxx_8k_sector_erase(uint32_t addr)
+//{
+
+//}
+
+int w25qxx_page_program(uint32_t addr, uint8_t *data, uint32_t len)
+{
+    QSPI_CommandTypeDef cmd = {0};
+
+    w25qxx_write_enable();
+
+    cmd.Instruction = W25QXX_CMD_QUAD_INPUT_PAGE_PROGRAM;
+    cmd.InstructionMode = QSPI_INSTRUCTION_1_LINE;
+
+    cmd.Address = addr;
+    cmd.AddressMode = QSPI_ADDRESS_1_LINE;
+    cmd.AddressSize = QSPI_ADDRESS_32_BITS;
+
+    cmd.DataMode = QSPI_DATA_4_LINES;
+    cmd.NbData = len;
+
+    HAL_QSPI_Command(&hqspi, &cmd, QSPI_TIMEOUT);
+
+    HAL_QSPI_Transmit(&hqspi, data, QSPI_TIMEOUT);
+
+    w25qxx_autopolling_ready();
+
+    return QSPI_OK;
+}
+
+int w25qxx_write(uint32_t addr, uint8_t *data, uint32_t len)
+{
+	uint32_t page_remain = 0;
+	
+	page_remain = 512 - addr % 512;
+	if (len <= page_remain)		page_remain = len;
+	
+	while(1)
+	{
+		w25qxx_page_program(addr, data, page_remain);
+		if (len == page_remain)
+        {
+            break;
+        }
+        else
+        {
+            data += page_remain;
+            addr += page_remain;
+
+            len -= page_remain;
+            if (len > 512)
+            {
+                page_remain = 512;
+            }
+            else
+            {
+                page_remain = len;
+            }
+        }
+	}
+	
+	return QSPI_OK;
+}
