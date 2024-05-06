@@ -1,0 +1,23 @@
+--cpu Cortex-M7.fp.dp
+"stm32h750xb\dual_w25q256jv.o"
+"stm32h750xb\dev_inf.o"
+"stm32h750xb\loader_src.o"
+"stm32h750xb\main.o"
+"stm32h750xb\gpio.o"
+"stm32h750xb\quadspi.o"
+"stm32h750xb\stm32h7xx_it.o"
+"stm32h750xb\stm32h7xx_hal_msp.o"
+"stm32h750xb\stm32h7xx_hal_cortex.o"
+"stm32h750xb\stm32h7xx_hal_qspi.o"
+"stm32h750xb\stm32h7xx_hal_rcc.o"
+"stm32h750xb\stm32h7xx_hal_rcc_ex.o"
+"stm32h750xb\stm32h7xx_hal_gpio.o"
+"stm32h750xb\stm32h7xx_hal_mdma.o"
+"stm32h750xb\stm32h7xx_hal_pwr.o"
+"stm32h750xb\stm32h7xx_hal_pwr_ex.o"
+"stm32h750xb\stm32h7xx_hal.o"
+"stm32h750xb\system_stm32h7xx.o"
+--strict --scatter ".\Target.lin"
+--diag_suppress L6305 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list "DUAL-W25Q256JV_H750Pro.map" -o stm32h750xb\DUAL-W25Q256JV_H750Pro.axf

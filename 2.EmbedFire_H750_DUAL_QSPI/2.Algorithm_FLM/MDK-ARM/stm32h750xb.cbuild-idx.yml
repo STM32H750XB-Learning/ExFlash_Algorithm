@@ -1,9 +1,0 @@
-build-idx:
-  generated-by: csolution version 2.3.0
-  csolution: stm32h750xb.csolution.yml
-  cprojects:
-    - cproject: stm32h750xb.cproject.yml
-  cbuilds:
-    - cbuild: stm32h750xb+stm32h750xb.cbuild.yml
-      project: stm32h750xb
-      configuration: +stm32h750xb
