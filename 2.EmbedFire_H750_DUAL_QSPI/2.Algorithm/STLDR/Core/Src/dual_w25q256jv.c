@@ -2,7 +2,7 @@
 #include <quadspi.h>
 #include <stdio.h>
 
-static w25qxx_interface_t w25qxx_mode = W25QXX_INTERFACE_QPI;
+//static w25qxx_interface_t w25qxx_mode = W25QXX_INTERFACE_QPI;
 
 int w25qxx_set_address_mode(w25qxx_address_mode_t address_mode)
 {
@@ -20,17 +20,6 @@ int w25qxx_set_address_mode(w25qxx_address_mode_t address_mode)
     }
 
     return QSPI_ERROR;
-}
-
-int w25qxx_init(void)
-{
-    w25qxx_reset();
-//	for(int i = 0; i < 100; i++)	HAL_Delay(1);       // 30us to delay,  this time can be longer
-	
-    w25qxx_set_address_mode(W25QXX_ADDRESS_MODE_4_BYTE);
-    w25qxx_write_status_reg(2, 0202);       // enable QE bit
-
-    return QSPI_OK;
 }
 
 int w25qxx_autopolling_ready(void)
@@ -54,6 +43,17 @@ int w25qxx_autopolling_ready(void)
     {
         Error_Handler();
     }
+
+    return QSPI_OK;
+}
+
+int w25qxx_init(void)
+{
+    w25qxx_reset();
+    //for(int i = 0; i < 10; i++)	HAL_Delay(1);       // 30us to delay,  this time can be longer
+    w25qxx_autopolling_ready();
+    w25qxx_set_address_mode(W25QXX_ADDRESS_MODE_4_BYTE);
+    w25qxx_write_status_reg(2, 0202);       // enable QE bit
 
     return QSPI_OK;
 }
@@ -112,8 +112,8 @@ int w25qxx_write_enable(void)
 int w25qxx_reset(void)
 {
     QSPI_CommandTypeDef cmd = {0};
-	
-	w25qxx_autopolling_ready();
+
+    w25qxx_autopolling_ready();
 
     cmd.InstructionMode = QSPI_INSTRUCTION_1_LINE;
     cmd.Instruction = W25QXX_CMD_ENABLE_RESET;
@@ -302,15 +302,15 @@ int w25qxx_page_program(uint32_t addr, uint8_t *data, uint32_t len)
 
 int w25qxx_write(uint32_t addr, uint8_t *data, uint32_t len)
 {
-	uint32_t page_remain = 0;
-	
-	page_remain = 512 - addr % 512;
-	if (len <= page_remain)		page_remain = len;
-	
-	while(1)
-	{
-		w25qxx_page_program(addr, data, page_remain);
-		if (len == page_remain)
+    uint32_t page_remain = 0;
+
+    page_remain = 512 - addr % 512;
+    if (len <= page_remain)		page_remain = len;
+
+    while(1)
+    {
+        w25qxx_page_program(addr, data, page_remain);
+        if (len == page_remain)
         {
             break;
         }
@@ -329,7 +329,7 @@ int w25qxx_write(uint32_t addr, uint8_t *data, uint32_t len)
                 page_remain = len;
             }
         }
-	}
-	
-	return QSPI_OK;
+    }
+
+    return QSPI_OK;
 }

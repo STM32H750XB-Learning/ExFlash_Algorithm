@@ -32,34 +32,34 @@ uint32_t base_adr = 0;
  *    Return Value:   0 - OK,  1 - Failed
  */
 int  Init        (unsigned long adr,   // Initialize Flash
-				  unsigned long clk,
-				  unsigned long fnc)
+                  unsigned long clk,
+                  unsigned long fnc)
 {
-	__disable_irq();
-	SystemInit();
+    __disable_irq();
+    SystemInit();
 
     hqspi.Instance = QUADSPI;
     HAL_QSPI_DeInit(&hqspi);
     HAL_DeInit();
-	
-	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+
+    /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
     HAL_Init();
 
     /* Configure the system clock */
     SystemClock_Config();
 
     /* Initialize all configured peripherals */
-	HAL_QSPI_DeInit(&hqspi);
-	
+    HAL_QSPI_DeInit(&hqspi);
+
     MX_GPIO_Init();
     MX_QUADSPI_Init();
-	
-	base_adr = adr;
-	
-	w25qxx_init();
-	
-	w25qxx_memorymapped();
-	
+
+    base_adr = adr;
+
+    w25qxx_init();
+
+    w25qxx_memorymapped();
+
     return 0;
 }
 
@@ -80,7 +80,13 @@ int UnInit(unsigned long fnc)
 
 int  EraseChip   (void)
 {
-	w25qxx_chip_erase();
+	HAL_QSPI_DeInit(&hqspi);
+	MX_QUADSPI_Init();
+	w25qxx_init();
+	
+    w25qxx_chip_erase();
+	
+	w25qxx_memorymapped();
 
     return 0;
 }
@@ -93,19 +99,19 @@ int  EraseChip   (void)
 
 int  EraseSector (unsigned long adr)
 {
-	HAL_QSPI_DeInit(&hqspi);
+    HAL_QSPI_DeInit(&hqspi);
     MX_QUADSPI_Init();
-	w25qxx_init();
-	
-	if (adr < base_adr || adr >= (base_adr + 0x04000000))
-	{
-		return 1;
-	}
+    w25qxx_init();
+
+    if (adr < base_adr || adr >= (base_adr + 0x04000000))
+    {
+        return 1;
+    }
 
     adr -= base_adr;
-	w25qxx_128k_block_erase(adr);
-	
-	w25qxx_memorymapped();
+    w25qxx_128k_block_erase(adr);
+
+    w25qxx_memorymapped();
 
     return 0;
 }
@@ -119,7 +125,7 @@ int  EraseSector (unsigned long adr)
  */
 int BlankCheck (unsigned long adr, unsigned long sz, unsigned char pat)
 {
-	return 1; /* Always Force Erase */
+    return 1; /* Always Force Erase */
 }
 
 /*
@@ -130,31 +136,31 @@ int BlankCheck (unsigned long adr, unsigned long sz, unsigned char pat)
  *    Return Value:   0 - OK,  1 - Failed
  */
 int  ProgramPage (unsigned long adr,   // Program Page Function
-				  unsigned long sz,
-				  unsigned char *buf)
+                  unsigned long sz,
+                  unsigned char *buf)
 {
-	HAL_QSPI_DeInit(&hqspi);
+    HAL_QSPI_DeInit(&hqspi);
     MX_QUADSPI_Init();
-	w25qxx_init();
-	
-	if (adr < base_adr || adr >= (base_adr + 0x04000000))
-	{
-		return 1;
-	}
+    w25qxx_init();
+
+    if (adr < base_adr || adr >= (base_adr + 0x04000000))
+    {
+        return 1;
+    }
 
     adr -= base_adr;
-	
-	w25qxx_write(adr, buf, sz);
-	
-	w25qxx_memorymapped();
+
+    w25qxx_write(adr, buf, sz);
+
+    w25qxx_memorymapped();
 
     return 0;
 }
 
 #ifdef FlashProg_Use_Verify
 unsigned long Verify	(unsigned long adr,   // Verify Function
-					  unsigned long sz,
-					  unsigned char *buf)
+                         unsigned long sz,
+                         unsigned char *buf)
 {
     uint8_t *p = (uint8_t *)adr;
 

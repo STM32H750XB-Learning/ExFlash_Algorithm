@@ -2482,16 +2482,16 @@ static HAL_StatusTypeDef QSPI_WaitFlagStateUntilTimeout(QSPI_HandleTypeDef *hqsp
   while((__HAL_QSPI_GET_FLAG(hqspi, Flag)) != State)
   {
     /* Check for the Timeout */
-    if (Timeout != HAL_MAX_DELAY)
-    {
-      if(((HAL_GetTick() - Tickstart) > Timeout) || (Timeout == 0U))
-      {
-        hqspi->State     = HAL_QSPI_STATE_ERROR;
-        hqspi->ErrorCode |= HAL_QSPI_ERROR_TIMEOUT;
+//    if (Timeout != HAL_MAX_DELAY)
+//    {
+//      if(((HAL_GetTick() - Tickstart) > Timeout) || (Timeout == 0U))
+//      {
+//        hqspi->State     = HAL_QSPI_STATE_ERROR;
+//        hqspi->ErrorCode |= HAL_QSPI_ERROR_TIMEOUT;
 
-        return HAL_ERROR;
-      }
-    }
+//        return HAL_ERROR;
+//      }
+//    }
   }
   return HAL_OK;
 }

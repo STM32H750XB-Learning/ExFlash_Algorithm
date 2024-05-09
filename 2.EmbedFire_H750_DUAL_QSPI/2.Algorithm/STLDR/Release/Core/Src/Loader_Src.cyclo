@@ -1,0 +1,4 @@
+../Core/Src/Loader_Src.c:22:5:Init	1
+../Core/Src/Loader_Src.c:70:5:Write	4
+../Core/Src/Loader_Src.c:111:5:SectorErase	2
+../Core/Src/Loader_Src.c:139:5:MassErase	1

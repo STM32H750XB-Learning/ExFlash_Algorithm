@@ -1,0 +1,14 @@
+../Core/Src/dual_w25q256jv.c:7:5:w25qxx_set_address_mode	3
+../Core/Src/dual_w25q256jv.c:25:5:w25qxx_autopolling_ready	2
+../Core/Src/dual_w25q256jv.c:50:5:w25qxx_init	1
+../Core/Src/dual_w25q256jv.c:61:5:w25qxx_memorymapped	2
+../Core/Src/dual_w25q256jv.c:94:5:w25qxx_write_enable	2
+../Core/Src/dual_w25q256jv.c:112:5:w25qxx_reset	3
+../Core/Src/dual_w25q256jv.c:135:5:w25qxx_write_enable_for_volatile_status_reg	1
+../Core/Src/dual_w25q256jv.c:147:5:w25qxx_read_status_reg	5
+../Core/Src/dual_w25q256jv.c:182:5:w25qxx_write_status_reg	5
+../Core/Src/dual_w25q256jv.c:216:5:w25qxx_8k_sector_erase	1
+../Core/Src/dual_w25q256jv.c:236:5:w25qxx_128k_block_erase	1
+../Core/Src/dual_w25q256jv.c:256:5:w25qxx_chip_erase	1
+../Core/Src/dual_w25q256jv.c:278:5:w25qxx_page_program	1
+../Core/Src/dual_w25q256jv.c:303:5:w25qxx_write	4

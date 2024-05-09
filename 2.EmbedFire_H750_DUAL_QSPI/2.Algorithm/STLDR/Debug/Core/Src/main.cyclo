@@ -1,0 +1,5 @@
+../Core/Src/main.c:58:19:HAL_InitTick	1
+../Core/Src/main.c:63:6:HAL_Delay	2
+../Core/Src/main.c:69:10:HAL_GetTick	2
+../Core/Src/main.c:87:6:SystemClock_Config	5
+../Core/Src/main.c:154:6:Error_Handler	1
